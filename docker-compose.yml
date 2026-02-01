@@ -1,0 +1,14 @@
+services:
+  vanna-mcp:
+    build: .
+    container_name: vanna-mcp-server
+    env_file:
+      - .env
+    volumes:
+      # Persist ChromaDB data
+      - ./chroma_data:/app/chroma_data
+      # Mount SSH key if using key-based auth
+      # - ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro
+    restart: unless-stopped
+    # Use host network for SSH tunnel access
+    network_mode: host

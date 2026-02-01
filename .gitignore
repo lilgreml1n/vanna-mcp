@@ -1,0 +1,33 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+venv/
+env/
+
+# Environment files
+.env
+
+# ChromaDB
+chroma_data/
+chroma.sqlite3
+*.sqlite3
+
+# IDEs
+.DS_Store
+.vscode/
+.idea/
+
+# Backup files
+*.bak
+*.patch
+-f/
+
+# Logs
+*.log
