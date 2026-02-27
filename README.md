@@ -62,5 +62,29 @@ OLLAMA_MODEL=codellama
 -   `get_schema`: Get column details for a specific table.
 -   `execute_sql`: Run manual SQL for verification.
 
+## 🧪 Quick Start with Sample Data
+
+If you don't have a database ready, you can set up a sample inventory database for testing:
+
+1.  **Create Sample Database:**
+    Run the included setup script in your MySQL environment:
+    ```bash
+    mysql -u root -p < setup_test_db.sql
+    ```
+    This creates an `inventory_db` with an `inventory` table and 10 sample items.
+
+2.  **Configure `.env`:**
+    Point your `.env` to this new database:
+    ```ini
+    MYSQL_DATABASE=inventory_db
+    # ... rest of your MySQL credentials ...
+    ```
+
+3.  **Test Queries:**
+    Once the server is running, try asking:
+    *   "How many Nike items do we have?"
+    *   "What is the total sale price of all sold items?"
+    *   "List all items in bin B-12."
+
 ## Integration with SparkForge
 This server is typically deployed on a DGX or high-performance server as part of the [SparkForge](https://github.com/lilgreml1n/sparkforge) ecosystem. It serves as the "brain" for other MCP proxies like `inventory-mcp`.
