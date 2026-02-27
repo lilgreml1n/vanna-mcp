@@ -83,6 +83,14 @@ If you don't have a database ready, you can set up a sample inventory database f
     ```
     This creates an `inventory_db` with an `inventory` table and 20 sample items.
 
+### 📋 What's in the Sample Data?
+The script pre-loads diverse items so you can test immediately:
+- **Nike** Air Max 90 (Men's 10.5, Black/White) in bin B-12.
+- **Patagonia** Better Sweater (Unisex L) in bin A-10.
+- **Adidas** Ultraboost 21 (Women's 8) in bin B-05.
+- **Levi's** 501 Original Fit Jeans (32x34) in bin C-22.
+- ... and 16 more realistic items across various brands!
+
 2.  **Configure `.env`:**
     Point your `.env` to this new database:
     ```ini
