@@ -22,7 +22,10 @@ To enable seamless natural language data exploration. By bridging LLMs with your
 ### 1. Prerequisites
 -   Python 3.11+
 -   A running SQL database (or SSH access to one).
--   (Optional) Ollama or LM Studio for local inference.
+-   **Local AI:** [Download Ollama](https://ollama.com/download) for local inference.
+
+### 🍎 Mac User?
+Follow the **[Mac & Local Ollama Setup Guide (50 Steps)](MAC_SETUP_GUIDE.md)** for a detailed walkthrough from zero to a running server.
 
 ### 2. Installation
 ```bash
