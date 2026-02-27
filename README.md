@@ -7,7 +7,7 @@ A Model Context Protocol (MCP) server that provides a natural language interface
 To enable seamless natural language data exploration. By bridging LLMs with your private SQL databases (via an SSH tunnel), this server allows you to "chat with your data" without manual SQL writing, all while keeping your database credentials secure on your remote server (like a DGX).
 
 ### 💰 The Free, Local Alternative
-This project is designed as a **completely free, local replacement** for expensive enterprise AI-to-SQL solutions (like Snowflake Cortex, Databricks IQ, or high-cost SaaS text-to-SQL tools). 
+This project is designed as a **completely free, local, open-source alternative** to expensive enterprise data platforms (comparable to the AI-to-SQL features found in **Databricks** or **Snowflake**).
 
 *   **Cost:** $0 (No per-token fees or monthly subscriptions).
 *   **Privacy:** Your data stays in your infrastructure.
