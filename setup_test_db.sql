@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS inventory (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. Insert sample data
+-- 3. Insert 20+ diverse sample items for realistic testing
 INSERT INTO inventory (brand, description, gender, size, color, bin, sold_or_not) VALUES
 ('Nike', 'Air Max 90 Running Shoes', 'Men', '10.5', 'Black/White', 'B-12', 'not_sold'),
 ('Adidas', 'Ultraboost 21', 'Women', '8', 'Cloud White', 'B-05', 'not_sold'),
@@ -30,9 +30,19 @@ INSERT INTO inventory (brand, description, gender, size, color, bin, sold_or_not
 ('Nike', 'Sportswear Tech Fleece Hoodie', 'Men', 'M', 'Dark Grey', 'B-12', 'sold'),
 ('Carhartt', 'Loose Fit Heavyweight T-Shirt', 'Men', 'L', 'Carhartt Brown', 'F-03', 'not_sold'),
 ('Birkenstock', 'Arizona Soft Footbed Sandals', 'Unisex', '42', 'Taupe Suede', 'G-08', 'not_sold'),
-('Champion', 'Reverse Weave Hoodie', 'Unisex', 'S', 'Silver Grey', 'A-05', 'not_sold');
+('Champion', 'Reverse Weave Hoodie', 'Unisex', 'S', 'Silver Grey', 'A-05', 'not_sold'),
+('Nike', 'Dunk Low Retro', 'Men', '11', 'Panda Black/White', 'B-13', 'not_sold'),
+('Arc''teryx', 'Beta LT Jacket', 'Men', 'L', 'Black', 'E-05', 'not_sold'),
+('Ralph Lauren', 'Polo Classic Fit Shirt', 'Men', 'XL', 'Blue Stripe', 'C-01', 'not_sold'),
+('Vans', 'Old Skool Classic', 'Unisex', '9', 'Black/Canvas', 'G-02', 'not_sold'),
+('Jordan', 'Air Jordan 1 Retro High', 'Men', '12', 'Chicago Red', 'B-01', 'not_sold'),
+('Columbia', 'Steens Mountain Fleece', 'Men', 'M', 'Navy', 'A-08', 'not_sold'),
+('Brooks', 'Ghost 14 Running Shoes', 'Women', '7.5', 'Pink/Gravel', 'B-20', 'not_sold'),
+('Under Armour', 'Tech 2.0 T-Shirt', 'Men', 'L', 'Royal Blue', 'F-05', 'not_sold'),
+('Oakley', 'Holbrook Sunglasses', 'Unisex', 'OS', 'Matte Black', 'G-15', 'not_sold'),
+('Yeezy', '350 V2 Beluga', 'Men', '10', 'Grey/Orange', 'B-02', 'sold');
 
--- 4. Create a table for eBay Orders (for complex query testing)
+-- 4. Create a table for eBay Orders (for join testing)
 CREATE TABLE IF NOT EXISTS ebay_orders (
     order_id VARCHAR(50) PRIMARY KEY,
     item_id INT,
@@ -44,8 +54,8 @@ CREATE TABLE IF NOT EXISTS ebay_orders (
 -- Insert sample orders
 INSERT INTO ebay_orders (order_id, item_id, order_date, sale_price) VALUES
 ('25-08123-9941', 6, '2024-02-15', 280.00),
-('25-08124-9942', 7, '2024-02-18', 110.00);
+('25-08124-9942', 7, '2024-02-18', 110.00),
+('25-08125-9943', 20, '2024-02-20', 350.00);
 
--- Display the tables
-SHOW TABLES;
-SELECT * FROM inventory;
+-- Final Check
+SELECT brand, COUNT(*) as count FROM inventory GROUP BY brand;

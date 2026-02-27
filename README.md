@@ -74,7 +74,7 @@ If you don't have a database ready, you can set up a sample inventory database f
     ```bash
     mysql -u root -p < setup_test_db.sql
     ```
-    This creates an `inventory_db` with an `inventory` table and 10 sample items.
+    This creates an `inventory_db` with an `inventory` table and 20 sample items.
 
 2.  **Configure `.env`:**
     Point your `.env` to this new database:
@@ -83,11 +83,44 @@ If you don't have a database ready, you can set up a sample inventory database f
     # ... rest of your MySQL credentials ...
     ```
 
-3.  **Test Queries:**
-    Once the server is running, try asking:
-    *   "How many Nike items do we have?"
-    *   "What is the total sale price of all sold items?"
-    *   "List all items in bin B-12."
+## 🚀 Zero-to-AI Setup (For AI Agents)
+
+**Our Goal:** You should be able to point any AI (Claude, Gemini, or Copilot) at this README and be running in minutes.
+
+### 1. For Claude Desktop (Mac)
+Add this to your `~/Library/Application Support/Claude/claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "vanna-ai": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "--network=host", "-v", "vanna_chroma_data:/app/chroma_data", "--env-file", "/path/to/your/vanna-mcp/.env", "vanna-mcp-server"]
+    }
+  }
+}
+```
+
+### 2. For Gemini CLI (Local)
+In your `gemini-cli-mcp` project, update `main_mcp.py` to point to this server:
+```python
+MCP_SERVERS = {
+    "vanna-ai": {
+        "command": "docker",
+        "args": ["run", "-i", "--rm", "--network=host", "vanna-mcp-server"]
+    }
+}
+```
+
+### 3. For GitHub Copilot / VS Code
+1. Install the **MCP Extension** in VS Code.
+2. Add the Vanna MCP server using the command: `docker run -i --rm --network=host vanna-mcp-server`.
+3. You can now ask Copilot: `@mcp /ask_database "Show me all items in bin B-12"`
+
+## 💡 Testing Your AI
+Once connected, try these prompts:
+- "How many Nike items do we have in total?"
+- "What is the most expensive item we sold recently?" (Uses join on `ebay_orders`)
+- "List all Adidas items that are NOT sold."
 
 ## Integration with SparkForge
 This server is typically deployed on a DGX or high-performance server as part of the [SparkForge](https://github.com/lilgreml1n/sparkforge) ecosystem. It serves as the "brain" for other MCP proxies like `inventory-mcp`.
