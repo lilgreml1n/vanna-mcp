@@ -97,9 +97,13 @@ def init_vanna():
     
     llm_type = os.getenv('LLM_TYPE', 'ollama')
     vanna_model = os.getenv('VANNA_MODEL', 'my-vanna-model')
-    logging.info(f"Initializing Vanna with {llm_type}...")
     
     if llm_type == "ollama":
+        logging.warning("!!!" + "=" * 54 + "!!!")
+        logging.warning("!!! WARNING: Using local Ollama. Performance may be SLOW    !!!")
+        logging.warning("!!! and potentially UNRELIABLE depending on your hardware. !!!")
+        logging.warning("!!!" + "=" * 54 + "!!!")
+        
         from vanna.ollama import Ollama
         from vanna.chromadb import ChromaDB_VectorStore
         
@@ -112,7 +116,7 @@ def init_vanna():
         vn_instance = MyVanna(config={'model': model})
         logging.info(f"Using Ollama model: {model} with ChromaDB vector store")
     
-    elif llm_type == "lmstudio":
+    elif llm_type == "openai":
         from vanna.openai import OpenAI_Chat
         from vanna.chromadb import ChromaDB_VectorStore
         
@@ -121,13 +125,37 @@ def init_vanna():
                 ChromaDB_VectorStore.__init__(self, config=config)
                 OpenAI_Chat.__init__(self, config=config)
         
+        api_key = os.getenv('OPENAI_API_KEY')
+        model = os.getenv('OPENAI_MODEL', 'gpt-4o')
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY required in .env for OpenAI")
+            
         vn_instance = MyVanna(config={
-            'api_key': 'not-needed',
-            'base_url': 'http://localhost:1234/v1',
-            'model': 'local-model'
+            'api_key': api_key,
+            'model': model
         })
-        logging.info("Using LM Studio with ChromaDB vector store")
-    
+        logging.info(f"Using OpenAI model: {model} with ChromaDB vector store")
+
+    elif llm_type == "gemini":
+        from vanna.google import GoogleGeminiChat
+        from vanna.chromadb import ChromaDB_VectorStore
+        
+        class MyVanna(ChromaDB_VectorStore, GoogleGeminiChat):
+            def __init__(self, config=None):
+                ChromaDB_VectorStore.__init__(self, config=config)
+                GoogleGeminiChat.__init__(self, config=config)
+        
+        api_key = os.getenv('GEMINI_API_KEY')
+        model = os.getenv('GEMINI_MODEL', 'gemini-1.5-flash')
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY required in .env for Gemini")
+            
+        vn_instance = MyVanna(config={
+            'api_key': api_key,
+            'model': model
+        })
+        logging.info(f"Using Gemini model: {model} with ChromaDB vector store")
+
     elif llm_type == "claude":
         from vanna.anthropic import Anthropic_Chat
         from vanna.chromadb import ChromaDB_VectorStore

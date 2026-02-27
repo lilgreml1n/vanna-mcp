@@ -1,130 +1,66 @@
 # Vanna AI MCP Server
 
-MCP (Model Context Protocol) server that enables AI assistants to query databases using natural language via Vanna AI.
+**Purpose:**  
+A Model Context Protocol (MCP) server that provides a natural language interface to SQL databases using Vanna AI. It allows AI assistants (like Claude or Gemini) to generate and execute SQL queries based on plain English questions.
+
+**Why this exists:**  
+To enable seamless natural language data exploration. By bridging LLMs with your private SQL databases (via an SSH tunnel), this server allows you to "chat with your data" without manual SQL writing, all while keeping your database credentials secure on your remote server (like a DGX).
 
 ## Features
 
-- 🗣️ **Natural Language SQL**: Ask questions in plain English, get SQL queries automatically
-- 🔐 **Secure SSH Tunneling**: Connects to remote databases via SSH with key or password auth
-- 🤖 **AI Training**: Train Vanna on your database schema and sample queries
-- 🔌 **MCP Compatible**: Works with Claude Desktop, Gemini CLI, and other MCP clients
-- 📊 **ChromaDB Vector Store**: Persistent storage for trained SQL patterns
+-   **Natural Language to SQL:** Convert user questions into executable SQL queries.
+-   **SSH Tunneling:** Securely connect to remote databases (e.g., MySQL on a DGX) from any environment.
+-   **Multiple LLM Providers:** Supports Ollama (local), LM Studio (local), Claude (Anthropic), Gemini (Google), and ChatGPT (OpenAI).
+-   **Vector Store Training:** Uses ChromaDB to remember your database schema and common queries to improve accuracy.
+-   **SSE Transport:** Built for high-performance containerized deployments using Server-Sent Events.
 
-## Quick Start
+> [!WARNING]
+> **Ollama Performance Note:** Running with local Ollama (`LLM_TYPE=ollama`) can be **slow and potentially unreliable** depending on your hardware. If you experience timeouts or inconsistent SQL generation, consider using a cloud provider like Gemini or OpenAI for production use.
 
-### Using Docker (Recommended)
+## Setup
 
+### 1. Prerequisites
+-   Python 3.11+
+-   A running SQL database (or SSH access to one).
+-   (Optional) Ollama or LM Studio for local inference.
+
+### 2. Installation
 ```bash
-# Create .env file (see .env.sample)
-cp .env.sample .env
-# Edit .env with your credentials
-
-# Run with Docker Compose
-docker-compose up -d
+git clone https://github.com/lilgreml1n/vanna-mcp
+cd vanna-mcp
+uv pip install -e .
 ```
 
-Server runs on **http://localhost:8000**
+### 3. Configuration
+Create a `.env` file in the root directory:
 
-### Local Installation
+```ini
+# --- LLM CONFIG ---
+LLM_TYPE=ollama  # choices: ollama, lmstudio, claude, gemini, openai
 
-```bash
-# Install with uv
-uv pip install vanna chromadb sshtunnel python-dotenv mcp starlette uvicorn
+# OLLAMA CONFIG
+OLLAMA_MODEL=codellama
 
-# Run the server
-uv run python main.py
+# CLAUDE CONFIG
+# ANTHROPIC_API_KEY=your_key_here
+# CLAUDE_MODEL=claude-3-5-sonnet-20241022
+
+# GEMINI CONFIG
+# GEMINI_API_KEY=your_key_here
+# GEMINI_MODEL=gemini-1.5-flash
+
+# OPENAI CONFIG
+# OPENAI_API_KEY=your_key_here
+# OPENAI_MODEL=gpt-4o
 ```
 
-## Configuration
+## Tools Provided
 
-Create a `.env` file with these variables:
+-   `ask_database`: Convert a question to SQL and optionally execute it.
+-   `train_vanna`: Provide DDL or example SQL to "teach" the model your schema.
+-   `get_tables`: List all available tables.
+-   `get_schema`: Get column details for a specific table.
+-   `execute_sql`: Run manual SQL for verification.
 
-```bash
-# SSH Tunnel Configuration
-SSH_HOST=your-server.com
-SSH_PORT=22
-SSH_USERNAME=your-user
-SSH_PASSWORD=your-password          # OR use key-based auth
-SSH_KEY_PATH=/path/to/private/key   # Optional
-SSH_KEY_PASSPHRASE=key-passphrase   # Optional
-
-# MySQL Database (on remote server)
-MYSQL_REMOTE_HOST=localhost  # Usually localhost when using tunnel
-MYSQL_REMOTE_PORT=3306
-MYSQL_DATABASE=your_database
-MYSQL_USER=db_user
-MYSQL_PASSWORD=db_password
-
-# Vanna AI
-VANNA_MODEL=chinook            # Your model name
-VANNA_API_KEY=your-api-key     # Get from vanna.ai
-```
-
-## Available MCP Tools
-
-- `generate_sql` - Generate SQL from natural language question
-- `run_sql` - Execute SQL query and return results
-- `train_question_sql` - Train Vanna with example question/SQL pairs
-- `train_ddl` - Train Vanna on database schema (DDL statements)
-- `get_training_data` - View all trained examples
-
-## Usage Examples
-
-### With Claude Desktop
-
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "vanna-ai": {
-      "command": "uv",
-      "args": ["run", "python", "/absolute/path/to/fastmcp/main.py"]
-    }
-  }
-}
-```
-
-### Example Queries
-
-```
-You: Show me the top 5 customers by total sales
-Claude: [generates and runs SQL query]
-
-You: What tables are in the database?
-Claude: [calls get_training_data to see schema]
-
-You: Train this: "show active users" -> SELECT * FROM users WHERE active=1
-Claude: [calls train_question_sql]
-```
-
-## Project Structure
-
-```
-fastmcp/
-├── main.py              # MCP server with Vanna integration
-├── docker-compose.yml   # Docker deployment
-├── Dockerfile
-├── pyproject.toml       # uv dependencies
-├── .env.sample          # Configuration template
-└── chroma_data/         # ChromaDB vector storage (persistent)
-```
-
-## Tech Stack
-
-- **Vanna AI**: Natural language to SQL conversion
-- **ChromaDB**: Vector database for training data storage
-- **MCP**: Model Context Protocol for AI tool integration
-- **SSH Tunnel**: Secure remote database access
-- **FastAPI/Starlette**: HTTP server framework
-
-## Security Notes
-
-- Never commit `.env` file to version control
-- Use SSH key authentication when possible
-- Database credentials are transmitted only through SSH tunnel
-- ChromaDB data is persisted in `chroma_data/` directory
-
-## License
-
-Personal use. Database access and credentials remain private.
+## Integration with SparkForge
+This server is typically deployed on a DGX or high-performance server as part of the [SparkForge](https://github.com/lilgreml1n/sparkforge) ecosystem. It serves as the "brain" for other MCP proxies like `inventory-mcp`.
